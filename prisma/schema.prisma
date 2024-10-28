@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id             Int         @id @default(autoincrement()) @db.UnsignedInt
+  username       String      @unique @db.VarChar(50)
+  password       String      @db.VarChar(100)
+  firstname      String      @db.VarChar(50)
+  lastname       String      @db.VarChar(50)
+  mobile         String      @db.VarChar(20)
+  dateofbirth    DateTime    @db.DateTime()
+  emailverified  Boolean     @default(false)
+  mobileverified Boolean     @default(false)
+  gender         genderType? @default(others)
+  keylevel       Int         @default(1) @db.TinyInt
+  createdat      DateTime    @default(now())
+  updatedat      DateTime?   @updatedAt @db.DateTime()
+  deletedat      DateTime?   @db.DateTime()
+  lastlogin      DateTime?   @db.DateTime()
+  deleted        Boolean     @default(false)
+  status         userStatus  @default(inactive)
+
+  wallet       wallets?
+  transactions transactions[]
+  auditlogs    auditlogs[]
+}
+
+model auditlogs {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  userid    Int       @db.UnsignedInt
+  user      users     @relation(fields: [userid], references: [id], onDelete: Restrict)
+  action    String    @default("") @db.VarChar(100)
+  note      String    @default("") @db.VarChar(250)
+  ip        String?   @default("") @db.VarChar(15)
+  createdat DateTime  @default(now())
+  updatedat DateTime? @updatedAt @db.DateTime()
+  deletedat DateTime? @db.DateTime()
+  deleted   Boolean   @default(false)
+}
+
+model wallets {
+  id               Int          @id @default(autoincrement()) @db.UnsignedInt
+  userid           Int          @unique @db.UnsignedInt
+  user             users        @relation(fields: [userid], references: [id], onDelete: Restrict)
+  walletnumber     String       @db.VarChar(11)
+  balance          Decimal      @default(0.0) @db.Decimal(10, 2)
+  availablebalance Decimal      @default(0.0) @db.Decimal(10, 2)
+  createdat        DateTime     @default(now())
+  updatedat        DateTime?    @updatedAt @db.DateTime()
+  deletedat        DateTime?    @db.DateTime()
+  deleted          Boolean      @default(false)
+  status           walletStatus @default(active)
+
+  senttransfers     transfers[] @relation("senttransfers")
+  receivedtransfers transfers[] @relation("receivedtransfers")
+}
+
+model transactions {
+  id        Int               @id @default(autoincrement()) @db.UnsignedInt
+  userid    Int               @db.UnsignedInt
+  user      users             @relation(fields: [userid], references: [id])
+  amount    Decimal           @default(0.0) @db.Decimal(10, 2)
+  type      transactionType   @default(accountfunding)
+  reference String            @unique @db.VarChar(50)
+  status    transactionStatus @default(successful)
+  createdat DateTime          @default(now())
+  updatedat DateTime?         @updatedAt @db.DateTime()
+  deletedat DateTime?         @db.DateTime()
+  deleted   Boolean           @default(false)
+}
+
+model transfers {
+  id                  Int               @id @default(autoincrement()) @db.UnsignedInt
+  senderwalletid      Int               @db.UnsignedInt
+  senderwallet        wallets           @relation(name: "senttransfers", fields: [senderwalletid], references: [id])
+  beneficiarywalletid Int               @db.UnsignedInt
+  beneficiarywallet   wallets           @relation(name: "receivedtransfers", fields: [beneficiarywalletid], references: [id])
+  amount              Decimal           @default(0.0) @db.Decimal(10, 2)
+  reference           String            @unique @db.VarChar(50)
+  status              transactionStatus @default(successful)
+  createdat           DateTime          @default(now())
+  updatedat           DateTime?         @updatedAt @db.DateTime()
+  deletedat           DateTime?         @db.DateTime()
+  deleted             Boolean           @default(false)
+}
+
+enum userStatus {
+  inactive
+  active
+  suspended
+}
+
+enum walletStatus {
+  blocked
+  active
+}
+
+enum transactionType {
+  credit
+  debit
+  accountfunding
+  withdrawal
+}
+
+enum transactionStatus {
+  pending
+  failed
+  successful
+}
+
+enum genderType {
+  male
+  female
+  others
+}
