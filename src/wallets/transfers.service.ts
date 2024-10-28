@@ -53,7 +53,12 @@ export class TransferService {
     }
   }
 
-  async creditAccount(walletnumber: string, amount: number, reference: string) {
+  async creditAccount(
+    walletnumber: string,
+    amount: number,
+    reference: string,
+    saveTransaction = true,
+  ) {
     try {
       const wallet = await this.dbService
         .client('wallets')
@@ -77,12 +82,13 @@ export class TransferService {
         })
         .where('id', wallet.id);
 
-      await this.dbService.client('transactions').insert({
-        userid: wallet.userid,
-        amount,
-        reference,
-        type: 'credit',
-      });
+      if (saveTransaction)
+        await this.dbService.client('transactions').insert({
+          userid: wallet.userid,
+          amount,
+          reference,
+          type: 'credit',
+        });
     } catch (error) {
       console.log(error);
       throw new HttpException(

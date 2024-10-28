@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { WalletsService } from './wallets.service';
-import { TransferDto, WithdrawDto } from '@dtos/wallets.dtos';
+import { TransferDto, WalletFundDto, WithdrawDto } from '@dtos/wallets.dtos';
 import { UserGuard } from 'src/guards/user.guards';
 
 @Controller('wallets')
@@ -17,5 +17,11 @@ export class WalletsController {
   @Post(`/withdraw`)
   public async requestWithdrawal(@Body() request: WithdrawDto) {
     return this.service.requestWithdrawal(request);
+  }
+
+  @UseGuards(UserGuard)
+  @Post(`/fund/initiate`)
+  public async initiateWalletFunding(@Body() request: WalletFundDto) {
+    return this.service.initiateWalletFunding(request);
   }
 }

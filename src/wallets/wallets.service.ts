@@ -1,4 +1,4 @@
-import { TransferDto, WithdrawDto } from '@dtos/wallets.dtos';
+import { TransferDto, WalletFundDto, WithdrawDto } from '@dtos/wallets.dtos';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import {
@@ -10,6 +10,7 @@ import RequestWithUser from 'src/types/request.with.user.type';
 import { StatusText } from 'src/types/response.types';
 import { TransferService } from './transfers.service';
 import { GenerateRef } from '@utils/number.utils';
+import { paystackUtil } from '@utils/paystack.utils';
 
 @Injectable()
 export class WalletsService {
@@ -150,6 +151,51 @@ export class WalletsService {
       });
     } catch (error) {
       console.log(error);
+      throw new HttpException(
+        {
+          message: error?.response || 'Unknown error has occured',
+          statusText: 'error',
+          status: error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+          data: error,
+        },
+        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async initiateWalletFunding(
+    req: WalletFundDto,
+  ): Promise<standardResponse | HttpException> {
+    try {
+      const reference = GenerateRef(20);
+      const amount = Number(req.amount);
+
+      await this.dbService.client('transactions').insert({
+        userid: this.request.user.id,
+        amount,
+        reference,
+        status: 'pending',
+      });
+
+      const paystackReq = await paystackUtil(`transaction/initialize`, `POST`, {
+        email: this.request.user.username,
+        amount: amount * 100,
+        currency: 'NGN',
+        reference,
+        metadata: JSON.stringify({
+          email: this.request.user.username,
+          id: this.request.user.id,
+        }),
+      });
+
+      return ResponseManager.standardResponse({
+        //send out response if everything works well
+        message: `Wallet funding initiated successfully!`,
+        status: HttpStatus.OK,
+        statusText: StatusText.SUCCESS,
+        data: paystackReq,
+      });
+    } catch (error) {
       throw new HttpException(
         {
           message: error?.response || 'Unknown error has occured',
