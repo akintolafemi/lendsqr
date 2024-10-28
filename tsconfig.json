@@ -16,6 +16,29 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@validators/*": [
+        "src/validators/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@transformers/*": [
+        "src/transformers/*"
+      ],
+      "@middlewares/*": [
+        "src/middlewares/*"
+      ],
+      "@interfaces/*": [
+        "src/interfaces/*"
+      ],
+      "@dtos/*": [
+        "src/dtos/*"
+      ],
+      "src/*": [
+        "src/*"
+      ],
+    }
   }
 }
