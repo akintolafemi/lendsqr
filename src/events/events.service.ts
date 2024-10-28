@@ -48,6 +48,7 @@ export class EventsService {
   @OnEvent(EventType.TRANSFER_WITH_PAYSTACK)
   async singleTransfer(data: paymentData) {
     try {
+      //use paystack service to transfer
       await paystackUtil(`transfer`, `POST`, {
         currency: 'NGN',
         source: 'balance',
