@@ -23,11 +23,13 @@ export class TransferService {
           .first();
 
         const availablebalance = Number(wallet['availablebalance']);
-        const balanceLeft = availablebalance - amount;
+        const newAvailableBalance = availablebalance - amount;
+        const balance = Number(wallet['balance']);
+        const newBalance = balance - amount;
         await trx('wallets')
           .update({
-            availablebalance: balanceLeft,
-            balance: balanceLeft,
+            availablebalance: newAvailableBalance,
+            balance: newBalance,
           })
           .where('id', wallet.id);
 
@@ -64,11 +66,13 @@ export class TransferService {
         .first();
 
       const availablebalance = Number(wallet['availablebalance']);
-      const newBalance = availablebalance + amount;
+      const newAvailableBalance = availablebalance + amount;
+      const balance = Number(wallet['balance']);
+      const newBalance = balance + amount;
       await this.dbService
         .client('wallets')
         .update({
-          availablebalance: newBalance,
+          availablebalance: newAvailableBalance,
           balance: newBalance,
         })
         .where('id', wallet.id);
@@ -94,6 +98,7 @@ export class TransferService {
 
   async transferToPaymentAccount(
     paymentaccountid: number,
+    userid: number,
     amount: number,
     reference: string,
   ) {
@@ -103,10 +108,20 @@ export class TransferService {
         .select('*')
         .where({
           id: paymentaccountid,
+          userid,
           deleted: false,
-          status: 'active',
         })
         .first();
+
+      if (!paymentaccount)
+        throw new HttpException(
+          'Invalid payment account',
+          HttpStatus.NOT_FOUND,
+          {
+            cause: `payment account`,
+            description: `Selected payment account is invalid`,
+          },
+        );
 
       const payment: paymentData = {
         amount: Number(amount) * 100,
@@ -125,9 +140,9 @@ export class TransferService {
     } catch (error) {
       console.log(error);
       throw new HttpException(
-        'fund transfer',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {
+        error?.cause || 'fund transfer',
+        error?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        error?.options || {
           cause: `wallet`,
           description: `Unable to transfer from wallet`,
         },

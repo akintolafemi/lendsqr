@@ -33,7 +33,8 @@ export class SignUpMiddleware implements NestMiddleware {
       .client('users')
       .select('id')
       .where('username', username)
-      .orWhere('mobile', mobile);
+      .orWhere('mobile', mobile)
+      .first();
     console.log(accountExist);
     if (accountExist) {
       throw new HttpException(

@@ -74,7 +74,7 @@ model transactions {
   user      users             @relation(fields: [userid], references: [id])
   amount    Decimal           @default(0.0) @db.Decimal(10, 2)
   type      transactionType   @default(accountfunding)
-  reference String            @unique @db.VarChar(50)
+  reference String            @db.VarChar(50)
   status    transactionStatus @default(successful)
   createdat DateTime          @default(now())
   updatedat DateTime?         @updatedAt @db.DateTime()
