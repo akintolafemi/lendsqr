@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "0fcf52a1-f786-4ec2-b17c-0694e12af9e5",
+		"name": "Lendsqr",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4673908",
+		"_collection_link": "https://red-resonance-395477.postman.co/workspace/Team-Workspace~2734e49e-5f0f-4881-8b51-35b16660e4c0/collection/4673908-0fcf52a1-f786-4ec2-b17c-0694e12af9e5?action=share&source=collection_link&creator=4673908"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Create Account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"michealakintola106.pog@gmail.com\",\n    \"password\": \"1234ASdf@\",\n    \"firstname\": \"Micheal\",\n    \"lastname\": \"Akintola\",\n    \"mobile\": \"+2348100131944\",\n    \"dateofbirth\": \"1990-01-01\",\n    \"gender\": \"female\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						},
+						"description": "### Auth Signup\n\nThis endpoint is used to create a new user account.\n\n#### Request Body\n\n- `username` (string): The email address of the user.\n    \n- `password` (string): The password for the user account.\n    \n- `firstname` (string): The first name of the user.\n    \n- `lastname` (string): The last name of the user.\n    \n- `mobile` (string): The mobile number of the user.\n    \n- `dateofbirth` (string): The date of birth of the user.\n    \n- `gender` (string): The gender of the user.\n    \n\n#### Response\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"integer\"\n    },\n    \"statusText\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Login to Account",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"auth_token\", pm.response.json().data.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"michealakintola106.pog@gmail.com\",\n    \"password\": \"1234ASdf@\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						},
+						"description": "The `POST /auth/signin` endpoint is used to authenticate and sign in a user. It expects a JSON payload with the user's username and password.\n\n### Request Body\n\n- `username` (string): The username of the user.\n    \n- `password` (string): The password of the user.\n    \n\n### Response\n\nThe response is a JSON object with the following properties:\n\n- `statusText` (string): A textual description of the status.\n    \n- `message` (string): A message related to the response.\n    \n- `status` (number): The status code of the response.\n    \n- `data` (object): An object containing the token and user information.\n    - `token` (string): The authentication token.\n        \n    - `user` (object): An object containing user details.\n        - `id` (number): The user's ID.\n            \n        - `username` (string): The username of the user.\n            \n        - `password` (string): The password of the user.\n            \n        - `firstname` (string): The first name of the user.\n            \n        - `lastname` (string): The last name of the user.\n            \n        - `mobile` (string): The mobile number of the user.\n            \n        - `dateofbirth` (string): The date of birth of the user.\n            \n        - `emailverified` (number): Indicates whether the user's email is verified.\n            \n        - `mobileverified` (number): Indicates whether the user's mobile number is verified.\n            \n        - `gender` (string): The gender of the user.\n            \n        - `keylevel` (number): The key level of the user.\n            \n        - `createdat` (string): The date and time of user creation.\n            \n        - `updatedat` (string): The date and time of the last update.\n            \n        - `deletedat` (string): The date and time of deletion, if applicable.\n            \n        - `lastlogin` (string): The date and time of the last login.\n            \n        - `deleted` (number): Indicates whether the user is deleted.\n            \n        - `status` (string): The status of the user.\n            \n\nThe response of this request can be documented as a JSON schema."
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{defaultBearer}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Wallets",
+			"item": [
+				{
+					"name": "Transfer to wallet",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"walletnumber\": \"7948854987\",\n    \"amount\": \"5000\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/transfer",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"transfer"
+							]
+						},
+						"description": "The `POST /wallets/transfer` endpoint is used to transfer a specified amount from one wallet to another.\n\n### Request Body\n\n- `walletnumber` (string): The wallet number from which the amount will be transferred.\n    \n- `amount` (string): The amount to be transferred.\n    \n\n### Response\n\nThe response will be in the JSON format with the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"message\": {\n            \"type\": \"string\"\n        },\n        \"status\": {\n            \"type\": \"number\"\n        },\n        \"statusText\": {\n            \"type\": \"string\"\n        }\n    }\n}\n\n ```\n\nThe response will include:\n\n- `message` (string): A message related to the transfer.\n    \n- `status` (number): The status code of the transfer.\n    \n- `statusText` (string): The status text of the transfer.\n    \n\nExample response:\n\n``` json\n{\n    \"message\": \"\",\n    \"status\": 0,\n    \"statusText\": \"\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Withdraw from Wallet",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"25000\",\n    \"paymentaccountid\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/withdraw",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"withdraw"
+							]
+						},
+						"description": "### POST /wallets/withdraw\n\nThis endpoint is used to initiate a withdrawal from the user's wallet.\n\n#### Request Body\n\n- amount (text, required): The amount to be withdrawn from the wallet.\n    \n- paymentaccountid (text, required): The ID of the payment account to which the withdrawal will be credited.\n    \n\n#### Response (JSON Schema)\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": { \"type\": \"string\" },\n    \"statusText\": { \"type\": \"string\" },\n    \"status\": { \"type\": \"number\" },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"response\": { \"type\": \"string\" },\n        \"status\": { \"type\": \"number\" },\n        \"options\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"cause\": { \"type\": \"string\" },\n            \"description\": { \"type\": \"string\" }\n          }\n        },\n        \"message\": { \"type\": \"string\" },\n        \"name\": { \"type\": \"string\" },\n        \"cause\": { \"type\": \"string\" }\n      }\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Wallet Funding",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": \"21000\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/wallets/fund/initiate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"wallets",
+								"fund",
+								"initiate"
+							]
+						},
+						"description": "The `POST /wallets/fund/initiate` endpoint is used to initiate a fund transfer to a wallet.\n\n### Request Body\n\n- amount (number, required): The amount to be transferred to the wallet.\n    \n\n### Response\n\nThe response is a JSON object with the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": { \"type\": \"string\" },\n    \"status\": { \"type\": \"number\" },\n    \"statusText\": { \"type\": \"string\" },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"status\": { \"type\": \"boolean\" },\n        \"message\": { \"type\": \"string\" },\n        \"data\": {\n          \"type\": \"object\",\n          \"properties\": {\n            \"authorization_url\": { \"type\": \"string\" },\n            \"access_code\": { \"type\": \"string\" },\n            \"reference\": { \"type\": \"string\" }\n          }\n        }\n      }\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Check health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}",
+					"host": [
+						"{{baseUrl}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3005/api/v1"
+		},
+		{
+			"key": "defaultBearer",
+			"value": "f88f805e328755375c3fcba8d0b1e5529c56fcbdb7a5f4030cfa11003dd1f514"
+		},
+		{
+			"key": "auth_token",
+			"value": ""
+		}
+	]
+}
