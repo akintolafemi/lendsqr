@@ -50,7 +50,11 @@ After pulling the repo, follow these steps to set up the project:
 $ npm install
 ```
 
-5. Start the development server with `npm run start:dev`.
+5.
+
+```bash
+$ npm run start:dev
+```
 
 ## Compile and run the project
 
