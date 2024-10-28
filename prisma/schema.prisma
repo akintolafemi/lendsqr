@@ -32,9 +32,10 @@ model users {
   deleted        Boolean     @default(false)
   status         userStatus  @default(inactive)
 
-  wallet       wallets?
-  transactions transactions[]
-  auditlogs    auditlogs[]
+  wallet          wallets?
+  transactions    transactions[]
+  auditlogs       auditlogs[]
+  paymentaccounts paymentaccounts[]
 }
 
 model auditlogs {
@@ -94,6 +95,36 @@ model transfers {
   updatedat           DateTime?         @updatedAt @db.DateTime()
   deletedat           DateTime?         @db.DateTime()
   deleted             Boolean           @default(false)
+}
+
+model paymentaccounts {
+  id            Int       @id @default(autoincrement()) @db.UnsignedInt
+  userid        Int       @db.UnsignedInt
+  user          users     @relation(fields: [userid], references: [id])
+  isprimary     Boolean   @default(false)
+  accountnumber String    @db.VarChar(20)
+  accountname   String    @db.MediumText
+  bankid        Int       @unique @db.UnsignedInt
+  bank          banks     @relation(fields: [bankid], references: [id], onDelete: Restrict)
+  recipientcode String    @db.VarChar(50)
+  createdat     DateTime  @default(now())
+  updatedat     DateTime? @updatedAt @db.DateTime()
+  deletedat     DateTime? @db.DateTime()
+  deleted       Boolean   @default(false)
+}
+
+model banks {
+  id              Int               @id @default(autoincrement()) @db.UnsignedInt
+  name            String            @db.VarChar(100)
+  slug            String            @db.VarChar(100)
+  code            String            @unique @db.VarChar(6)
+  color           String            @db.VarChar(14)
+  logo            String            @db.VarChar(100)
+  createdat       DateTime          @default(now())
+  updatedat       DateTime?         @updatedAt @db.DateTime()
+  deletedat       DateTime?         @db.DateTime()
+  deleted         Boolean           @default(false)
+  paymentaccounts paymentaccounts[]
 }
 
 enum userStatus {
