@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventsModule } from './events/events.module';
 import { AuthMiddleware, SignUpMiddleware } from '@middlewares/auth.middleware';
+import { WalletsModule } from './wallets/wallets.module';
 
 declare global {
   interface BigInt {
@@ -48,6 +49,7 @@ BigInt.prototype.toJSON = function () {
     AuthModule,
     EventEmitterModule.forRoot({}),
     EventsModule,
+    WalletsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

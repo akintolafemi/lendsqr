@@ -1,4 +1,4 @@
-import { CreateAccountDto } from '@dtos/auth.dto';
+import { CreateAccountDto } from '@dtos/auth.dtos';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import {
   ResponseManager,

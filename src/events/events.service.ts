@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GenerateWalletNumber } from '@utils/number.utils';
+import { paystackUtil } from '@utils/paystack.utils';
 import { KnexService } from 'src/knex/knex.service';
 import { EventType } from 'src/types/event.types';
+import { paymentData } from 'src/types/paystack.types';
 
 @Injectable()
 export class EventsService {
@@ -37,6 +39,19 @@ export class EventsService {
       await this.dbService.client('wallets').insert({
         userid: data.userid,
         walletnumber,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  @OnEvent(EventType.TRANSFER_WITH_PAYSTACK)
+  async singleTransfer(data: paymentData) {
+    try {
+      await paystackUtil(`transfer`, `POST`, {
+        currency: 'NGN',
+        source: 'balance',
+        ...data,
       });
     } catch (e) {
       console.log(e);
