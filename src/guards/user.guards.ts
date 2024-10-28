@@ -53,7 +53,8 @@ export class UserGuard implements CanActivate {
         .where({
           id: verifiedToken['id'],
         })
-        .select('*');
+        .select('*')
+        .first();
 
       if (!user) {
         throw new HttpException(
@@ -70,7 +71,6 @@ export class UserGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      console.log(error);
       throw new HttpException(
         {
           message: error,

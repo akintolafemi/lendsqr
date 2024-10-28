@@ -66,12 +66,23 @@ export class WalletsService {
         });
 
       const reference = GenerateRef(20);
-      this.transferService.debitAccount(wallet.walletnumber, amount, reference);
-      this.transferService.creditAccount(
+      await this.transferService.debitAccount(
+        wallet.walletnumber,
+        amount,
+        reference,
+      );
+      await this.transferService.creditAccount(
         beneficiaryWallet.walletnumber,
         amount,
         reference,
       );
+
+      await this.dbService.client('transfers').insert({
+        senderwalletid: wallet.id,
+        beneficiarywalletid: beneficiaryWallet.id,
+        amount,
+        reference,
+      });
 
       return ResponseManager.standardResponse({
         message: `Fund transfer successful!`,
@@ -79,6 +90,7 @@ export class WalletsService {
         statusText: StatusText.SUCCESS,
       });
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         {
           message: error?.response || 'Unknown error has occured',
@@ -120,7 +132,12 @@ export class WalletsService {
         });
 
       const reference = GenerateRef(20);
-      this.transferService.debitAccount(wallet.walletnumber, amount, reference);
+      await this.transferService.transferToPaymentAccount(
+        req.paymentaccountid,
+        this.request.user.id,
+        amount,
+        reference,
+      );
 
       return ResponseManager.standardResponse({
         message: `Withdrawal request processed successfully!`,
@@ -132,6 +149,7 @@ export class WalletsService {
         },
       });
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         {
           message: error?.response || 'Unknown error has occured',
