@@ -49,7 +49,7 @@ async function bootstrap() {
   );
 
   // Enable graceful shutdown hooks, ensuring proper cleanup when the application is terminated
-  app.enableShutdownHooks();
+  // app.enableShutdownHooks();
 
   // Logger to track application startup status
   const logger = new Logger(NestApplication.name);
