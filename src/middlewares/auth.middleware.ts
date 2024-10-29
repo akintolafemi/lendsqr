@@ -10,6 +10,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { KnexService } from 'src/knex/knex.service';
 import { StatusText } from 'src/types/response.types';
 import { EventType } from 'src/types/event.types';
+import { adjustorUtil } from '@utils/adjutor.utils';
 
 @Injectable()
 export class SignUpMiddleware implements NestMiddleware {
@@ -28,6 +29,18 @@ export class SignUpMiddleware implements NestMiddleware {
       );
     }
 
+    const karma = await adjustorUtil(`verification/karma/${username}`, 'GET'); //get karma service
+
+    if (karma?.data?.karma_identity)
+      //if user is on list
+      throw new HttpException(
+        {
+          message: 'User is forbidden from creating account',
+          statusText: StatusText.FORBIDDEN,
+          status: HttpStatus.FORBIDDEN,
+        },
+        HttpStatus.CONFLICT,
+      );
     //check username does not exist
     const accountExist = await this.dbService
       .client('users')
@@ -35,12 +48,12 @@ export class SignUpMiddleware implements NestMiddleware {
       .where('username', username)
       .orWhere('mobile', mobile)
       .first();
-    console.log(accountExist);
+    // console.log(accountExist);
     if (accountExist) {
       throw new HttpException(
         {
           message: 'email address or mobile already in use',
-          statusText: 'error',
+          statusText: StatusText.CONFLICT,
           status: HttpStatus.CONFLICT,
         },
         HttpStatus.CONFLICT,
@@ -59,9 +72,9 @@ export class AuthMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     //check that request is valid
-    const { username, password, deviceid } = req.body;
+    const { username, password } = req.body;
 
-    if (!(username && password) && !(username && deviceid)) {
+    if (!username || !password) {
       throw new HttpException(
         {
           message: 'username or password is invalid',
