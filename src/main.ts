@@ -5,7 +5,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { NestApplication, NestFactory } from '@nestjs/core';
-import { AppOptions } from '@utils/app.options.util'; // Custom app options, such as CORS configuration, etc.
+import { AppOptions } from '@utils/app.options.utils'; // Custom app options, such as CORS configuration, etc.
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 

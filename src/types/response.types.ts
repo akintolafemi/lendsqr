@@ -4,6 +4,8 @@ export enum StatusText {
   ERROR = 'error',
   BAD_REQUEST = 'bad request',
   UNAUTHORIZED = 'unauthorized',
+  FORBIDDEN = 'forbidden',
+  CONFLICT = 'conflict',
 }
 
 export type statusValue = (typeof StatusText)[keyof typeof StatusText];
